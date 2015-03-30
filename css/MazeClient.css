@@ -1,0 +1,35 @@
+/* 
+    Document   : MazeClient
+    Created on : 06/01/2012, 3:05:11 PM
+    Author     : mat351
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+#pageheader {
+    background-color: black;
+    color: red;
+    text-align: center;
+}
+
+div#left {
+    float:left;
+    width:480px;
+}
+
+div#right {
+    float:left;
+}
+
+div#buttons {
+    clear:both;
+}

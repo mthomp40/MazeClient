@@ -1,0 +1,28 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Maze Game</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript"
+                src="./js/MazeClient.js">
+        </script>
+        <link rel='stylesheet' type="text/css" href="./css/MazeClient.css">
+    </head>
+    <body onload="doSetupSocket()">
+        <div id="pageheader">
+            <h1>Maze Game</h1>
+        </div>
+        <div id="login">
+            <fieldset>
+                <legend>Login</legend>
+                <p>Nickname: <input type="text" id="uname" size="20" /></p>
+                <input type="button" value="Login" onclick="doLogin()" id="loginbutton"/>
+            </fieldset>
+        </div>
+        <canvas id="mazemap"></canvas>
+    </body>
+</html>
