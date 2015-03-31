@@ -7,9 +7,8 @@ and open the template in the editor.
     <head>
         <title>Maze Game</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript"
-                src="./js/MazeClient.js">
-        </script>
+        <script type="text/javascript" src="./js/MazeClient.js"></script>
+        <script type="text/javascript" src="./js/glMatrix-0.9.5.min.js"></script>
         <link rel='stylesheet' type="text/css" href="./css/MazeClient.css">
     </head>
     <body onload="doSetupSocket()">
@@ -24,12 +23,25 @@ and open the template in the editor.
                 <input type="button" value="Logout" onclick="doLogout()" disabled id="logoutbutton"/>
             </fieldset>
         </div>
+        <div id="movement" class="right">
+            <fieldset>
+                <legend>Movement</legend>
+                
+            </fieldset>
+        </div>
+        <div id="actions" class="right">
+            <fieldset>
+                <legend>Actions</legend>
+                <input type="button" value="Start" onclick="doStart()" id="startbutton"/>
+                <input type="button" value="Quit" onclick="doLogout()" id="quitbutton"/>
+            </fieldset>
+        </div>
         <div id="people" class="right">
             <fieldset>
                 <legend>People</legend>
                 <p><span id="persons"></span></p>
             </fieldset>
         </div>
-        <canvas id="mazemap" hidden></canvas>
+        <canvas id="mazecanvas" hidden></canvas>
     </body>
 </html>

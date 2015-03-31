@@ -14,9 +14,8 @@ colourmap.maroon = "#800000";
 colourmap.green = "#008000";
 colourmap.navy = "#000080";
 
-// Array for markers
-
 var markers = new Array();
+var heading;
 
 function doSetupSocket()
 {
@@ -29,32 +28,16 @@ function doSetupSocket()
     socket.onmessage = handleUpdate;
 }
 
-function clearAllMarkers()
-{
-    var i;
-    console.log("clear all markers");
-    for (i in markers) {
-        markers[i].setMap(null);
-    }
-    markers.length = 0;
-}
+function webGLStart() {
+    var canvas = document.getElementById("mazecanvas");
+    initGL(canvas);
+    initShaders();
+    initBuffers();
 
-function addMarker(colour, location)
-{
-    //                var marker = new google.maps.Marker({
-    //                    position:where,
-    //                    map:map,
-    //                    icon: './images/red.png'
-    //                    
-    //                });
-    console.log("add marker");
-    var iconurl = "./images/" + colour + ".PNG";
-    var marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        icon: iconurl
-    });
-    markers.push(marker);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(gl.DEPTH_TEST);
+
+    drawScene();
 }
 
 function handleUpdate(msg) {
@@ -117,19 +100,22 @@ function doLoadMap() {
     var logoutbutton = document.getElementById('logoutbutton');
     logoutbutton.disabled = false;
     var mapdiv = document.getElementById('mazemap');
-    mapdiv.
+
 }
 
-function doMoveCommand() {
+function doStart() {
+
+}
+
+function doMoveCommand(button) {
     console.log("move command");
     var data = new Object();
     data.uname = document.getElementById('uname').value;
-    data.lat = document.getElementById('lat').value;
-    data.lng = document.getElementById('lng').value;
+    data.heading = heading;
+    data.button = button;
     var command = new Object();
     command.action = "Move";
     command.data = data;
     var stringversion = JSON.stringify(command);
     socket.send(stringversion);
-
 }
