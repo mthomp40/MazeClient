@@ -8,7 +8,21 @@ and open the template in the editor.
         <title>Maze Game</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="./js/MazeClient.js"></script>
-        <script type="text/javascript" src="./js/glMatrix-0.9.5.min.js"></script>
+        <script id="shader-fs" type="x-shader/x-fragment">
+            void main(void) {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            }
+        </script>
+        <script id="shader-vs" type="x-shader/x-vertex">
+            attribute vec3 aVertexPosition;
+
+            uniform mat4 uMVMatrix;
+            uniform mat4 uPMatrix;
+
+            void main(void) {
+            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+            }
+        </script>
         <link rel='stylesheet' type="text/css" href="./css/MazeClient.css">
     </head>
     <body onload="doSetupSocket()">
@@ -26,7 +40,7 @@ and open the template in the editor.
         <div id="movement" class="right">
             <fieldset>
                 <legend>Movement</legend>
-                
+
             </fieldset>
         </div>
         <div id="actions" class="right">
@@ -42,6 +56,8 @@ and open the template in the editor.
                 <p><span id="persons"></span></p>
             </fieldset>
         </div>
-        <canvas id="mazecanvas" hidden></canvas>
+        <canvas id="mazecanvas" width="800" height="800" hidden>
+            Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+        </canvas>
     </body>
 </html>
