@@ -24,8 +24,8 @@ function doSetupSocket()
     socket = ("MozWebSocket" in window ? new MozWebSocket(url) : new WebSocket(url));
     console.log("socket created");
     socket.onclose = function(msg) {
-        alert("Connection closed");
-    }
+        alert("Logged out");
+    };
     socket.onmessage = handleUpdate;
 }
 
@@ -57,57 +57,67 @@ function addMarker(colour, location)
     markers.push(marker);
 }
 
-function handleUpdate(msg)
-{
+function handleUpdate(msg) {
     console.log("handle update");
     var info = JSON.parse(msg.data);
     var infodata = info['data'];
-    if (info.action == "login") {
-        console.log("logged in successfully");
+    if (info.action === "alreadyinuse") {
+        alert("Nickname is already in use. Please try again");
+        return;
+    } else if (info.action === "setupmap") {
+        doSetupMap();
     }
+    var i;
+    var persons = document.getElementById('persons');
+    persons.innerHTML = "";
+    var str = "";
+    for (i in infodata) {
+        var clientdata = infodata[i];
+        var cname = clientdata['uname'];
+        var colourname = clientdata['colour'];
+        var colorval = colourmap[colourname];
+        str = str + "<font style='color:" + colorval + "'>" + cname + "</font>, ";
+    }
+    persons.innerHTML = str;
 }
 
 function doLogin() {
     console.log("login");
     var uname = document.getElementById('uname').value;
-    if (uname == "") {
+    if (uname === "") {
         alert("You must supply a nickname");
         return;
     }
     var data = new Object();
     data.uname = document.getElementById('uname').value;
     var command = new Object();
-    command.action = "Login";
+    command.action = "login";
     command.data = data;
     var stringversion = JSON.stringify(command);
     socket.send(stringversion);
 }
 
+function doLogout() {
+    console.log("logout");
+    var uname = document.getElementById('uname');
+    uname.value = "";
+    var loginbutton = document.getElementById('loginbutton');
+    loginbutton.disabled = true;
+    var logoutbutton = document.getElementById('logoutbutton');
+    logoutbutton.disabled = true;
+    var persons = document.getElementById('persons');
+    persons.innerHTML = "";
+    socket.close();
+}
+
 function doLoadMap() {
     console.log("load map");
-    var uname = document.getElementById('uname').value;
-    if (uname == "") {
-        alert("You must supply a name");
-        return;
-    }
-    var lat = document.getElementById('lat').value;
-    var lng = document.getElementById('lng').value;
-    var where = new google.maps.LatLng(lat, lng);
-    var itype = google.maps.MapTypeId.ROADMAP;
-    // Lots of options, only a few are mandatory (zoom, center, map type)
-    var optionsArray = {
-        zoom: 14, // 0-17
-        center: where,
-        mapTypeId: itype
-    };
-    var mapdiv = document.getElementById('map');
-    map = new google.maps.Map(mapdiv, optionsArray);
-
-    var movebutton = document.getElementById('movebutton');
-    movebutton.disabled = false;
-    var loadmapbutton = document.getElementById('loadmapbutton');
-    loadmapbutton.disabled = true;
-    document.getElementById('uname').disabled = true;
+    var loginbutton = document.getElementById('loginbutton');
+    loginbutton.disabled = true;
+    var logoutbutton = document.getElementById('logoutbutton');
+    logoutbutton.disabled = false;
+    var mapdiv = document.getElementById('mazemap');
+    mapdiv.
 }
 
 function doMoveCommand() {

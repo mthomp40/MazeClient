@@ -21,15 +21,11 @@ root {
     text-align: center;
 }
 
-div#left {
+.left {
     float:left;
     width:480px;
 }
 
-div#right {
+.right {
     float:left;
-}
-
-div#buttons {
-    clear:both;
 }

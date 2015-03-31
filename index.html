@@ -16,13 +16,20 @@ and open the template in the editor.
         <div id="pageheader">
             <h1>Maze Game</h1>
         </div>
-        <div id="login">
+        <div id="login" class="left">
             <fieldset>
                 <legend>Login</legend>
                 <p>Nickname: <input type="text" id="uname" size="20" /></p>
                 <input type="button" value="Login" onclick="doLogin()" id="loginbutton"/>
+                <input type="button" value="Logout" onclick="doLogout()" disabled id="logoutbutton"/>
             </fieldset>
         </div>
-        <canvas id="mazemap"></canvas>
+        <div id="people" class="right">
+            <fieldset>
+                <legend>People</legend>
+                <p><span id="persons"></span></p>
+            </fieldset>
+        </div>
+        <canvas id="mazemap" hidden></canvas>
     </body>
 </html>
