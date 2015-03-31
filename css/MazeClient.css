@@ -29,3 +29,8 @@ root {
 .right {
     float:left;
 }
+
+#movement input {
+    width: 80px;
+    height: 80px;
+}

@@ -16,6 +16,59 @@ colourmap.navy = "#000080";
 
 var markers = new Array();
 var heading;
+var blocksize = 15;
+var map = [
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000",
+    "00000000000000000000000000000000000000000000000000"
+];
 
 function doSetupSocket()
 {
@@ -28,8 +81,15 @@ function doSetupSocket()
     socket.onmessage = handleUpdate;
 }
 
-function doWebGLStart() {
+function doInitGame() {
+    console.log("load map");
+    var loginbutton = document.getElementById('loginbutton');
+    loginbutton.disabled = true;
+    var logoutbutton = document.getElementById('logoutbutton');
+    logoutbutton.disabled = false;
+
     var canvas = document.getElementById("mazecanvas");
+    canvas.style.visibility = "visible";
     gl = initWebGL(canvas);
 
     // Only continue if WebGL is available and working
@@ -45,20 +105,17 @@ function doWebGLStart() {
 
 function initWebGL(canvas) {
     gl = null;
-
     try {
         // Try to grab the standard context. If it fails, fallback to experimental.
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     }
     catch (e) {
     }
-
     // If we don't have a GL context, give up now
     if (!gl) {
         alert("Unable to initialize WebGL. Your browser may not support it.");
         gl = null;
     }
-
     return gl;
 }
 
@@ -101,7 +158,6 @@ function getShader(gl, id) {
         if (currentChild.nodeType == currentChild.TEXT_NODE) {
             theSource += currentChild.textContent;
         }
-
         currentChild = currentChild.nextSibling;
     }
     if (shaderScript.type == "x-shader/x-fragment") {
@@ -126,6 +182,21 @@ function getShader(gl, id) {
     return shader;
 }
 
+function createSquare(gl) {
+    var vertexBuffer;
+    vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    var verts = [
+        .5, .5, 0.0,
+        -.5, .5, 0.0,
+        .5, -.5, 0.0,
+        -.5, -.5, 0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+    var square = {buffer: vertexBuffer, vertSize: 3, nVerts: 4, primtype: gl.TRIANGLE_STRIP};
+    return square;
+}
+
 function handleUpdate(msg) {
     console.log("handle update");
     var info = JSON.parse(msg.data);
@@ -134,7 +205,8 @@ function handleUpdate(msg) {
         alert("Nickname is already in use. Please try again");
         return;
     } else if (info.action === "initgame") {
-        doWebGLStart();
+        init();
+        //doInitGame();
     }
     var i;
     var persons = document.getElementById('persons');
@@ -177,20 +249,6 @@ function doLogout() {
     var persons = document.getElementById('persons');
     persons.innerHTML = "";
     socket.close();
-}
-
-function doLoadMap() {
-    console.log("load map");
-    var loginbutton = document.getElementById('loginbutton');
-    loginbutton.disabled = true;
-    var logoutbutton = document.getElementById('logoutbutton');
-    logoutbutton.disabled = false;
-    var mapdiv = document.getElementById('mazemap');
-
-}
-
-function doStart() {
-
 }
 
 function doMoveCommand(button) {
