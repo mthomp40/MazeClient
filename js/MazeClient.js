@@ -69,8 +69,8 @@ function handleUpdate(msg) {
         alert("Nickname is already in use. Please try again");
         return;
     } else if (info.action === "initgame") {
-        doInitGame(infodata.maze);
         console.log('else if initgame data: ', infodata);
+        doInitGame(infodata.maze);
         var i;
         var persons = document.getElementById('persons');
         persons.innerHTML = "";
@@ -80,13 +80,20 @@ function handleUpdate(msg) {
             var uname = clientdata['uname'];
             var colourname = clientdata['colour'];
             var colourval = colourmap[colourname];
-            theplayer = new Player({
-                uname: uname,
-                location: null,
-                heading: null,
-                action: null,
-                colour: colourval
-            });
+            str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
+        }
+        persons.innerHTML = str;
+    } else if (info.action === "updateplayers") {
+        console.log('else if updateplayers data: ', infodata);
+        var i;
+        var persons = document.getElementById('persons');
+        persons.innerHTML = "";
+        var str = "";
+        for (i in infodata) {
+            var clientdata = infodata[i];
+            var uname = clientdata['uname'];
+            var colourname = clientdata['colour'];
+            var colourval = colourmap[colourname];
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
         persons.innerHTML = str;
@@ -153,6 +160,14 @@ function doLogout() {
 
 function doInitGame(data) {
     console.log("init game");
+    var uname = document.getElementById('uname');
+    theplayer = new Player({
+        uname: uname.value,
+        location: null,
+        heading: null,
+        action: null,
+        colour: null
+    });
     var login = document.getElementById('login');
     login.style.display = "none";
     var movement = document.getElementById('movement');
