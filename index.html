@@ -38,38 +38,41 @@ and open the template in the editor.
                 <input type="button" value="Logout" onclick="doLogout()" disabled id="logoutbutton"/>
             </fieldset>
         </div>
-        <div id="movement" class="right">
-            <fieldset>
-                <legend>Movement</legend>
-                <table>
-                    <tr>
-                        <td></td><td><input type="image" src="images/arrow_up.png" alt="up" onclick="doMoveCommand('up')"/></td><td></td>
-                    </tr>
-                    <tr>
-                        <td><input type="image" src="images/arrow_left.png" alt="left" onclick="doMoveCommand('left')"/></td>
-                        <td><input type="image" src="images/fire_button.png" alt="fire" onclick="doMoveCommand('fire')"/></td>
-                        <td><input type="image" src="images/arrow_right.png" alt="right" onclick="doMoveCommand('right')"/></td>
-                    </tr>
-                    <tr>
-                        <td></td><td><input type="image" src="images/arrow_down.png" alt="down" onclick="doMoveCommand('down')"/></td><td></td>
-                    </tr>
-                </table>
-            </fieldset>
-        </div>
-        <div id="actions" class="right">
-            <fieldset>
-                <legend>Actions</legend>
-                <input type="button" value="Start" onclick="doStart()" id="startbutton"/>
-                <input type="button" value="Quit" onclick="doLogout()" id="quitbutton"/>
-            </fieldset>
-        </div>
-        <div id="people" class="right">
-            <fieldset>
-                <legend>People</legend>
-                <p><span id="persons"></span></p>
-            </fieldset>
-        </div>
-        <canvas id="myCanvas" style="clear: both;" width="600" height="600" >Sorry! You need a modern browser to be able to view this.
+        <canvas id="myCanvas" style="visibility: hidden;" width="600" height="600" >
+            Sorry! You need a modern browser to be able to view this.
         </canvas>
+        <div id="wrapper" style="float:right">
+            <div id="movement" style="visibility: hidden;">
+                <fieldset>
+                    <legend>Movement</legend>
+                    <table>
+                        <tr>
+                            <td></td><td><input type="image" src="images/arrow_up.png" alt="up" onclick="doMoveCommand('up')"/></td><td></td>
+                        </tr>
+                        <tr>
+                            <td><input type="image" src="images/arrow_left.png" alt="left" onclick="doMoveCommand('left')"/></td>
+                            <td><input type="image" src="images/fire_button.png" alt="fire" onclick="doMoveCommand('fire')"/></td>
+                            <td><input type="image" src="images/arrow_right.png" alt="right" onclick="doMoveCommand('right')"/></td>
+                        </tr>
+                        <tr>
+                            <td></td><td><input type="image" src="images/arrow_down.png" alt="down" onclick="doMoveCommand('down')"/></td><td></td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+            <div id="actions" style="visibility: hidden;">
+                <fieldset>
+                    <legend>Actions</legend>
+                    <input type="button" value="Start" onclick="doStart()" id="startbutton"/>
+                    <input type="button" value="Quit" onclick="doLogout()" id="quitbutton"/>
+                </fieldset>
+            </div>
+            <div id="people" style="visibility: hidden;">
+                <fieldset>
+                    <legend>People</legend>
+                    <p><span id="persons"></span></p>
+                </fieldset>
+            </div>
+        </div>
     </body>
 </html>

@@ -1,88 +1,32 @@
 /**
  * @author Klas Kroon, North Kingdom / http://oos.moxiecode.com/
+ * Modified by Mark Thompson 1/4/15
  */
 
 var context;
 var canvas;
-// init
-var rows = 20;
-var columns = 20;
-var tileSize = 13;
+var rows = null;
+var columns = null;
+var tileSize = null;
 var startx = 0;
 var starty = 0;
 var cellstack = [];
 var grid = [];
 var currentcell;
 var visitedcells = 0;
+var grid;
 
-function initMap() {
+function initMaze(gr) {
+    grid = gr;
+    rows = 12;
+    columns = 12;
+    tileSize = 22;
     console.log('initting!!!');
     canvas = document.getElementById('myCanvas');
     context = canvas.getContext('2d');
 
-    initMaze();
-}
-
-function initMaze() {
-    cellstack = [];
-    grid = [];
-    visitedcells = 0;
-
-    // setup
-    for (var y = 0; y < rows; ++y) {
-        grid[y] = [];
-        for (var x = 0; x < columns; ++x) {
-            var o = {x: startx + x * tileSize, y: starty + y * tileSize, visited: false, r: y, c: x, n: true, e: true, s: true, w: true};
-            grid[y][x] = o;
-        }
-    }
-
-    //random cell
-    currentcell = grid[Math.floor(Math.random() * rows)][Math.floor(Math.random() * columns)];
-
-    // populate
-    populate();
-
-    // make tiles out of it...
-    // setup map
-    var map = [];
-    for (var y = 0; y < 1 + grid.length * 2; y++) {
-        map[y] = [];
-        for (var x = 0; x < 1 + grid[0].length * 2; x++) {
-            map[y][x] = 1;
-        }
-    }
-
-    for (var y = 0; y < grid.length; y++) {
-        for (var x = 0; x < grid[0].length; x++) {
-            var rx = 1 + (x * 2);
-            var ry = 1 + (y * 2);
-            var o = grid[y][x];
-
-            map[ry][rx] = 0;
-
-            // n
-            if (!o.n) {
-                map[ry - 1][rx] = 0;
-            }
-            // s
-            if (!o.s) {
-                map[ry + 1][rx] = 0;
-            }
-            // w
-            if (!o.w) {
-                map[ry][rx - 1] = 0;
-            }
-            // e
-            if (!o.e) {
-                map[ry][rx + 1] = 0;
-            }
-        }
-    }
-
-    console.log('Map: ', map);
     // draw it
-    draw(map);
+    drawMaze(grid);
 }
 
 //hide walls
@@ -180,7 +124,7 @@ function populate() {
     }
 }
 
-function draw(map) {
+function drawMaze(map) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     // bg
     context.fillStyle = "#EFEFEF";
@@ -198,6 +142,31 @@ function draw(map) {
             if (cell != 0) {
                 context.fillRect(startx + tileSize * x, starty + tileSize * y, tileSize, tileSize);
             }
+        }
+    }
+}
+
+function drawPlayers(players) {
+    startx = canvas.width / 2 - (4 + columns * tileSize);
+    starty = canvas.height / 2 - (4 + rows * tileSize);
+    var img = new Image();
+
+    for (var p = 0; p < players.length; p++) {
+        context.fillStyle = players[p].colour;
+        if (players[p].heading === 'left') {
+            img.src = "images/m1.png";
+        } else if (players[p].heading === 'right') {
+            img.src = "images/m2.png";
+        } else if (players[p].heading === 'down') {
+            img.src = "images/m3.png";
+        } else if (players[p].heading === 'up') {
+            img.src = "images/m4.png";
+        }
+        console.log('player: ', players[p]);
+        var cell = grid[players[p].location.y][players[p].location.x];
+        if (cell !== 0) {
+            context.drawImage(img, startx + tileSize * players[p].location.x,
+                    starty + tileSize * players[p].location.y, tileSize, tileSize);
         }
     }
 }
