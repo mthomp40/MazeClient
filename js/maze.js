@@ -15,12 +15,74 @@ var grid = [];
 var currentcell;
 var visitedcells = 0;
 
-function init() {
+function initMap() {
     console.log('initting!!!');
     canvas = document.getElementById('myCanvas');
     context = canvas.getContext('2d');
 
     initMaze();
+}
+
+function initMaze() {
+    cellstack = [];
+    grid = [];
+    visitedcells = 0;
+
+    // setup
+    for (var y = 0; y < rows; ++y) {
+        grid[y] = [];
+        for (var x = 0; x < columns; ++x) {
+            var o = {x: startx + x * tileSize, y: starty + y * tileSize, visited: false, r: y, c: x, n: true, e: true, s: true, w: true};
+            grid[y][x] = o;
+        }
+    }
+
+    //random cell
+    currentcell = grid[Math.floor(Math.random() * rows)][Math.floor(Math.random() * columns)];
+
+    // populate
+    populate();
+
+    // make tiles out of it...
+    // setup map
+    var map = [];
+    for (var y = 0; y < 1 + grid.length * 2; y++) {
+        map[y] = [];
+        for (var x = 0; x < 1 + grid[0].length * 2; x++) {
+            map[y][x] = 1;
+        }
+    }
+
+    for (var y = 0; y < grid.length; y++) {
+        for (var x = 0; x < grid[0].length; x++) {
+            var rx = 1 + (x * 2);
+            var ry = 1 + (y * 2);
+            var o = grid[y][x];
+
+            map[ry][rx] = 0;
+
+            // n
+            if (!o.n) {
+                map[ry - 1][rx] = 0;
+            }
+            // s
+            if (!o.s) {
+                map[ry + 1][rx] = 0;
+            }
+            // w
+            if (!o.w) {
+                map[ry][rx - 1] = 0;
+            }
+            // e
+            if (!o.e) {
+                map[ry][rx + 1] = 0;
+            }
+        }
+    }
+
+    console.log('Map: ', map);
+    // draw it
+    draw(map);
 }
 
 //hide walls
