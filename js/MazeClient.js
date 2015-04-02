@@ -22,7 +22,8 @@ function Player(player) {
     this.uname = player.uname;
     this.heading = player.heading;
     this.action = player.action;
-    this.colour = player.colour;
+    this.colourname = player.colourname;
+    this.colourval = player.colourval;
     this.location = player.location;
 }
 
@@ -36,7 +37,7 @@ function clearAllPlayers()
     players.length = 0;
 }
 
-function addPlayer(uname, heading, action, colour, location)
+function addPlayer(uname, heading, action, colourname, colourval, location)
 {
     console.log("add player");
     var player = new Player({
@@ -44,10 +45,10 @@ function addPlayer(uname, heading, action, colour, location)
         location: location,
         heading: heading,
         action: action,
-        colour: colour
+        colourname: colourname,
+        colourval: colourval
     });
     players.push(player);
-    console.log("players: ", players);
 }
 
 function doSetupSocket()
@@ -118,12 +119,14 @@ function handleUpdate(msg) {
                     location: location,
                     heading: heading,
                     action: action,
-                    colour: colourval
+                    colourname: colourname,
+                    colourval: colourval
                 });
             }
-            addPlayer(uname, heading, action, colourval, location);
+            addPlayer(uname, heading, action, colourname, colourval, location);
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
+        drawMaze();
         drawPlayers(players);
         persons.innerHTML = str;
     }
@@ -204,14 +207,31 @@ function startGame() {
 
 function doMoveCommand(button) {
     console.log("move command");
-
-
-    var data = new Object();
-    data.heading = heading;
-    data.button = button;
-    var command = new Object();
-    command.action = "Move";
-    command.data = data;
-    var stringversion = JSON.stringify(command);
-    socket.send(stringversion);
+    if (theplayer.heading === button) {
+        if (isValidMove(theplayer.location, button)) {
+            var data = new Object();
+            data.heading = button;
+            var command = new Object();
+            command.action = "move";
+            command.data = data;
+            var stringversion = JSON.stringify(command);
+            socket.send(stringversion);
+        }
+    } else if (button === 'fire') {
+        var data = new Object();
+        data.heading = theplayer.heading;
+        var command = new Object();
+        command.action = "fire";
+        command.data = data;
+        var stringversion = JSON.stringify(command);
+        socket.send(stringversion);
+    } else {
+        var data = new Object();
+        data.heading = button;
+        var command = new Object();
+        command.action = "direction";
+        command.data = data;
+        var stringversion = JSON.stringify(command);
+        socket.send(stringversion);
+    }
 }

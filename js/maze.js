@@ -14,19 +14,18 @@ var cellstack = [];
 var grid = [];
 var currentcell;
 var visitedcells = 0;
-var grid;
 
 function initMaze(gr) {
     grid = gr;
-    rows = 12;
-    columns = 12;
-    tileSize = 22;
-    console.log('initting!!!');
+    rows = 8;
+    columns = 8;
+    tileSize = 30;
+    console.log('initting!!!: ', grid);
     canvas = document.getElementById('myCanvas');
     context = canvas.getContext('2d');
 
     // draw it
-    drawMaze(grid);
+    drawMaze();
 }
 
 //hide walls
@@ -124,10 +123,10 @@ function populate() {
     }
 }
 
-function drawMaze(map) {
+function drawMaze() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     // bg
-    context.fillStyle = "#EFEFEF";
+    context.fillStyle = "#FFFFFF";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // maze
@@ -136,9 +135,9 @@ function drawMaze(map) {
     startx = canvas.width / 2 - (4 + columns * tileSize);
     starty = canvas.height / 2 - (4 + rows * tileSize);
 
-    for (var y = 0; y < map.length; y++) {
-        for (var x = 0; x < map[y].length; x++) {
-            var cell = map[y][x];
+    for (var y = 0; y < grid.length; y++) {
+        for (var x = 0; x < grid[y].length; x++) {
+            var cell = grid[y][x];
             if (cell != 0) {
                 context.fillRect(startx + tileSize * x, starty + tileSize * y, tileSize, tileSize);
             }
@@ -149,24 +148,56 @@ function drawMaze(map) {
 function drawPlayers(players) {
     startx = canvas.width / 2 - (4 + columns * tileSize);
     starty = canvas.height / 2 - (4 + rows * tileSize);
-    var img = new Image();
-
+    var imgArray = [];
     for (var p = 0; p < players.length; p++) {
-        context.fillStyle = players[p].colour;
-        if (players[p].heading === 'left') {
-            img.src = "images/m1.png";
-        } else if (players[p].heading === 'right') {
-            img.src = "images/m2.png";
-        } else if (players[p].heading === 'down') {
-            img.src = "images/m3.png";
-        } else if (players[p].heading === 'up') {
-            img.src = "images/m4.png";
+        (function(p) {
+            imgArray[p] = new Image();
+            if (players[p].heading === 'left') {
+                imgArray[p].src = "images/man1_" + players[p].colourname + ".png";
+            } else if (players[p].heading === 'right') {
+                imgArray[p].src = "images/man2_" + players[p].colourname + ".png";
+            } else if (players[p].heading === 'down') {
+                imgArray[p].src = "images/man3_" + players[p].colourname + ".png";
+            } else if (players[p].heading === 'up') {
+                imgArray[p].src = "images/man4_" + players[p].colourname + ".png";
+            }
+            imgArray[p].onload = function() {
+                console.log('player: ', players[p]);
+                var cell = grid[players[p].location.y][players[p].location.x];
+                if (cell !== 0) {
+                    context.drawImage(imgArray[p], startx + tileSize * players[p].location.x,
+                            starty + tileSize * players[p].location.y, tileSize, tileSize);
+                }
+            };
+            if (players[p].action === 'fire'){
+                
+            }
+        })(p);
+    }
+}
+
+function isValidMove(location, direction) {
+    console.log("location: ", location);
+    if (direction === 'left') {
+        var cell = grid[location.y][location.x - 1];
+        if (location.x > 1 && cell != 1) {
+            return true;
         }
-        console.log('player: ', players[p]);
-        var cell = grid[players[p].location.y][players[p].location.x];
-        if (cell !== 0) {
-            context.drawImage(img, startx + tileSize * players[p].location.x,
-                    starty + tileSize * players[p].location.y, tileSize, tileSize);
+    } else if (direction === 'right') {
+        var cell = grid[location.y][location.x + 1];
+        if (location.x < (grid.length - 2) && cell != 1) {
+            return true;
+        }
+    } else if (direction === 'up') {
+        var cell = grid[location.y - 1][location.x];
+        if (location.y > 1 && cell != 1) {
+            return true;
+        }
+    } else if (direction === 'down') {
+        var cell = grid[location.y + 1][location.x];
+        if (location.y < (grid[0].length - 2) && cell != 1) {
+            return true;
         }
     }
+    return false;
 }

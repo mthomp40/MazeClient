@@ -24,6 +24,7 @@ and open the template in the editor.
             gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
             }
         </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <link rel='stylesheet' type="text/css" href="./css/MazeClient.css">
     </head>
     <body onload="doSetupSocket()">
@@ -74,5 +75,27 @@ and open the template in the editor.
                 </fieldset>
             </div>
         </div>
+        <script>
+            $(document).ready(function() {
+            $(document).keydown(function(event){
+            if (event.which == 37) {
+            doMoveCommand('left');
+            event.preventDefault();
+            } else if (event.which == 39) {
+            doMoveCommand('right');
+            event.preventDefault();
+            } else if (event.which == 38) {
+            doMoveCommand('up');
+            event.preventDefault();
+            } else if (event.which == 40) {
+            doMoveCommand('down');
+            event.preventDefault();
+            } else if (event.which == 32) {
+            doMoveCommand('fire');
+            event.preventDefault();
+            }
+            });
+            });
+        </script>
     </body>
 </html>
