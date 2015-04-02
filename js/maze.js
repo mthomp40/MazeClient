@@ -169,8 +169,53 @@ function drawPlayers(players) {
                             starty + tileSize * players[p].location.y, tileSize, tileSize);
                 }
             };
-            if (players[p].action === 'fire'){
-                
+            if (players[p].action === 'fire') {
+                context.beginPath();
+                var lazerfill;
+                if (players[p].heading === 'left') {
+                    context.moveTo(startx + tileSize * players[p].location.x,
+                            starty + tileSize * players[p].location.y + (tileSize / 2));
+                    context.lineTo(startx + tileSize * players[p].location.x - (tileSize * 2.5),
+                            starty + tileSize * players[p].location.y);
+                    context.lineTo(startx + tileSize * players[p].location.x - (tileSize * 2.5),
+                            starty + tileSize * players[p].location.y + (tileSize));
+                    lazerfill = context.createLinearGradient(0, 0, tileSize * 2.5, 0);
+                    lazerfill.addColorStop(0, "#ff6600");
+                    lazerfill.addColorStop(1, "#ffff00");
+                } else if (players[p].heading === 'right') {
+                    context.moveTo(startx + tileSize * players[p].location.x + tileSize,
+                            starty + tileSize * players[p].location.y + (tileSize / 2));
+                    context.lineTo(startx + tileSize * players[p].location.x + (tileSize * 3.5),
+                            starty + tileSize * players[p].location.y);
+                    context.lineTo(startx + tileSize * players[p].location.x + (tileSize * 3.5),
+                            starty + tileSize * players[p].location.y + (tileSize));
+                    lazerfill = context.createLinearGradient(0, 0, tileSize, 0);
+                    lazerfill.addColorStop(0, "#ffff00");
+                    lazerfill.addColorStop(1, "#ff6600");
+                } else if (players[p].heading === 'down') {
+                    context.moveTo(startx + tileSize * players[p].location.x + (tileSize / 2),
+                            starty + tileSize * players[p].location.y + tileSize);
+                    context.lineTo(startx + tileSize * players[p].location.x,
+                            starty + tileSize * players[p].location.y + (tileSize * 3.5));
+                    context.lineTo(startx + tileSize * players[p].location.x + tileSize,
+                            starty + tileSize * players[p].location.y + (tileSize * 3.5));
+                    lazerfill = context.createLinearGradient(0, 0, 0, tileSize * 2.5);
+                    lazerfill.addColorStop(0, "#ffff00");
+                    lazerfill.addColorStop(1, "#ff6600");
+                } else if (players[p].heading === 'up') {
+                    context.moveTo(startx + tileSize * players[p].location.x + (tileSize / 2),
+                            starty + tileSize * players[p].location.y);
+                    context.lineTo(startx + tileSize * players[p].location.x,
+                            starty + tileSize * players[p].location.y - (tileSize * 2.5));
+                    context.lineTo(startx + tileSize * players[p].location.x + tileSize,
+                            starty + tileSize * players[p].location.y - (tileSize * 2.5));
+                    lazerfill = context.createLinearGradient(0, tileSize * 2.5, 0, 0);
+                    lazerfill.addColorStop(0, "#ff6600");
+                    lazerfill.addColorStop(1, "#ffff00");
+                }
+                context.closePath();
+                context.fillStyle = lazerfill;
+                context.fill();
             }
         })(p);
     }

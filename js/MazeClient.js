@@ -98,6 +98,21 @@ function handleUpdate(msg) {
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
         persons.innerHTML = str;
+    } else if (info.action === "die") {
+        console.log('else if die data: ', infodata);
+        alert("You died because " + infodata.player.uname + " hit you!");
+        var i;
+        var persons = document.getElementById('persons');
+        persons.innerHTML = "";
+        var str = "";
+        for (i in infodata) {
+            var clientdata = infodata[i];
+            var uname = clientdata['uname'];
+            var colourname = clientdata['colour'];
+            var colourval = colourmap[colourname];
+            str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
+        }
+        persons.innerHTML = str;
     } else {
         console.log('else data: ', infodata);
         var i;
