@@ -55,22 +55,22 @@ function doSetupSocket()
 {
     // Get a WebSocket - browser dependent!
     socket = ("MozWebSocket" in window ? new MozWebSocket(url) : new WebSocket(url));
-    console.log("socket created");
+    //console.log("socket created");
     socket.onclose = function(msg) {
-        alert("Logged out");
+        alert(msg);
     };
     socket.onmessage = handleUpdate;
 }
 
 function handleUpdate(msg) {
-    console.log("handle update");
+    //console.log("handle update");
     var info = JSON.parse(msg.data);
     var infodata = info['data'];
     if (info.action === "alreadyinuse") {
         alert("Nickname is already in use. Please try again");
         return;
     } else if (info.action === "initgame") {
-        console.log('else if initgame data: ', infodata);
+        //console.log('else if initgame data: ', infodata);
         doInitGame(infodata.maze);
         var i;
         var persons = document.getElementById('persons');
@@ -84,23 +84,9 @@ function handleUpdate(msg) {
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
         persons.innerHTML = str;
-    } else if (info.action === "updateplayers") {
-        console.log('else if updateplayers data: ', infodata);
-        var i;
-        var persons = document.getElementById('persons');
-        persons.innerHTML = "";
-        var str = "";
-        for (i in infodata) {
-            var clientdata = infodata[i];
-            var uname = clientdata['uname'];
-            var colourname = clientdata['colour'];
-            var colourval = colourmap[colourname];
-            str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
-        }
-        persons.innerHTML = str;
     } else if (info.action === "die") {
         console.log('else if die data: ', infodata);
-        alert("You died because " + infodata.player.uname + " hit you!");
+        alert("You died because " + infodata.uname + " hit you!");
         var i;
         var persons = document.getElementById('persons');
         persons.innerHTML = "";
@@ -114,7 +100,7 @@ function handleUpdate(msg) {
         }
         persons.innerHTML = str;
     } else {
-        console.log('else data: ', infodata);
+        //console.log('else data: ', infodata);
         var i;
         var persons = document.getElementById('persons');
         persons.innerHTML = "";
@@ -173,18 +159,26 @@ function doLogout() {
     logoutbutton.disabled = true;
     var persons = document.getElementById('persons');
     persons.innerHTML = "";
-    socket.close();
+    var data = new Object();
+    data.uname = document.getElementById('uname').value;
+    var command = new Object();
+    command.action = "logout";
+    command.data = data;
+    var stringversion = JSON.stringify(command);
+    socket.send(stringversion);
 }
 
 function doInitGame(data) {
-    console.log("init game");
+    //console.log("init game");
     var uname = document.getElementById('uname');
     theplayer = new Player({
         uname: uname.value,
         location: null,
         heading: null,
         action: null,
-        colour: null
+        colour: null,
+        loggedin: true,
+        inplay: null
     });
     var login = document.getElementById('login');
     login.style.display = "none";
@@ -201,12 +195,11 @@ function doInitGame(data) {
 }
 
 function doStart() {
-    console.log("doStart");
+    //console.log("doStart");
     var startbutton = document.getElementById('startbutton');
     startbutton.disabled = true;
     var quitbutton = document.getElementById('quitbutton');
     quitbutton.disabled = false;
-
     var data = new Object();
     data.uname = document.getElementById('uname').value;
     var command = new Object();
@@ -216,12 +209,8 @@ function doStart() {
     socket.send(stringversion);
 }
 
-function startGame() {
-
-}
-
 function doMoveCommand(button) {
-    console.log("move command");
+    //console.log("move command");
     if (theplayer.heading === button) {
         if (isValidMove(theplayer.location, button)) {
             var data = new Object();
