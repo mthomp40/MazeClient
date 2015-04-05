@@ -18,6 +18,10 @@ var players = new Array();
 var heading;
 var blocksize = 15;
 
+function redrawMaze() {
+    drawMaze(players);
+}
+
 function Player(player) {
     this.uname = player.uname;
     this.heading = player.heading;
@@ -181,7 +185,7 @@ function doInitGame(data) {
     controls.style.visibility = "visible";
     var canvas = document.getElementById('canvaswrapper');
     canvas.style.visibility = "visible";
-    
+
     initMaze(data);
 }
 

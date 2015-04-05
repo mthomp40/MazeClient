@@ -1,7 +1,3 @@
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html>
     <head>
@@ -51,7 +47,7 @@ and open the template in the editor.
                     <fieldset>
                         <legend>Actions</legend>
                         <input type="button" class="button grey" value="Start" onclick="doStart()" id="startbutton"/>
-                        <input type="button" class="button grey" value="Quit" onclick="doQuit()" id="quitbutton"/>
+                        <input type="button" class="button grey" value="Quit" onclick="doQuit()" disabled id="quitbutton"/>
                     </fieldset>
                 </div>
                 <div id="people">
@@ -106,22 +102,7 @@ and open the template in the editor.
             event.preventDefault();
             }
             });
-            var c = $('#myCanvas');
-            var ct = c.get(0).getContext('2d');
-            var container = $(c).parent();
-
-            //Run function when browser resizes
-            $(window).resize(respondCanvas);
-
-            function respondCanvas(){ 
-            c.attr('width', $(container).width() ); //max width
-            c.attr('height', $(container).height() ); //max height
-            drawMaze();
-            drawPlayers;
-            }
-
-            //Initial call 
-            respondCanvas();
+            $(window).resize(redrawMaze());
             });
         </script>
     </body>
