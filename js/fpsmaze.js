@@ -1,128 +1,32 @@
-/// <reference path="babylon.js" />
-
 "use strict";
 
-// Size of a cube/block
 var BLOCK_SIZE = 8;
-//var maze = null;
-// Are we inside the maze or looking at the QR Code in bird view?
-var QRCodeView = false;
-var freeCamera, canvas, engine, lovescene;
+var aerialView = false;
+var freeCamera, canvas, engine, thescene;
 var camPositionInLabyrinth, camRotationInLabyrinth;
 
-function doOtherLogin() {
-    var login = document.getElementById('login');
-    login.style.display = "none";
-    var controls = document.getElementById('controlswrapper');
-    controls.style.visibility = "visible";
-    var canvaswrapper = document.getElementById('canvaswrapper');
-    canvaswrapper.style.visibility = "visible";
-    var canvas = document.getElementById('canvas');
-    /*
-     lovescene = createQRCodeLabyrinth("vanessa");
-     console.log("Lovescene: ", lovescene);
-     lovescene.activeCamera.attachControl(canvas);
-     
-     // Once the scene is loaded, just register a render loop to render it
-     engine.runRenderLoop(function() {
-     lovescene.render();
-     });
-     
-     canvas.className = "offScreen onScreen";
-     */
-}
+function start3dMaze(maze) {
+    canvas = document.getElementById("canvas");
+    // Check support
+    if (!BABYLON.Engine.isSupported()) {
+        window.alert('Browser not supported');
+    } else {
+        engine = new BABYLON.Engine(canvas, true);
 
-function createQRCodeMaze() {
-    //number of modules count or cube in width/height
-    var mCount = maze.length;
+        window.addEventListener("resize", function() {
+            engine.resize();
+        });
+        thescene = createMaze(maze);
+        // Enable keyboard/mouse controls on the scene (FPS like mode)
+        thescene.activeCamera.attachControl(canvas);
 
-    var scene = new BABYLON.Scene(engine);
-
-    scene.gravity = new BABYLON.Vector3(0, -0.8, 0);
-    scene.collisionsEnabled = true;
-
-    freeCamera = new BABYLON.FreeCamera("free", new BABYLON.Vector3(0, 5, 0), scene);
-    freeCamera.minZ = 1;
-    freeCamera.checkCollisions = true;
-    freeCamera.applyGravity = true;
-    freeCamera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
-
-    // Ground
-    var groundMaterial = new BABYLON.StandardMaterial("groundMat", scene);
-    groundMaterial.emissiveTexture = new BABYLON.Texture("textures/arroway.de_tiles-35_d100.jpg", scene);
-    groundMaterial.emissiveTexture.uScale = mCount;
-    groundMaterial.emissiveTexture.vScale = mCount;
-    groundMaterial.bumpTexture = new BABYLON.Texture("textures/arroway.de_tiles-35_b010.jpg", scene);
-    groundMaterial.bumpTexture.uScale = mCount;
-    groundMaterial.bumpTexture.vScale = mCount;
-    groundMaterial.specularTexture = new BABYLON.Texture("textures/arroway.de_tiles-35_s100-g100-r100.jpg", scene);
-    groundMaterial.specularTexture.uScale = mCount;
-    groundMaterial.specularTexture.vScale = mCount;
-
-    var ground = BABYLON.Mesh.CreateGround("ground", (mCount + 2) * BLOCK_SIZE, (mCount + 2) * BLOCK_SIZE, 1, scene, false);
-    ground.material = groundMaterial;
-    ground.checkCollisions = true;
-
-    //Skybox
-    var skybox = BABYLON.Mesh.CreateBox("skyBox", 800.0, scene);
-    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox", scene);
-    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    skybox.material = skyboxMaterial;
-
-    //At Last, add some lights to our scene
-    var light0 = new BABYLON.PointLight("pointlight0", new BABYLON.Vector3(28, 78, 385), scene);
-    light0.diffuse = new BABYLON.Color3(0.5137254901960784, 0.2117647058823529, 0.0941176470588235);
-    light0.intensity = 0.2;
-
-    var light1 = new BABYLON.PointLight("pointlight1", new BABYLON.Vector3(382, 96, 4), scene);
-    light1.diffuse = new BABYLON.Color3(1, 0.7333333333333333, 0.3568627450980392);
-    light1.intensity = 0.2;
-
-    //TO DO: create the labyrinth
-    var cubeTopMaterial = new BABYLON.StandardMaterial("cubeTop", scene);
-    cubeTopMaterial.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.15);
-
-    var cubeWallMaterial = new BABYLON.StandardMaterial("cubeWalls", scene);
-    cubeWallMaterial.emissiveTexture = new BABYLON.Texture("textures/masonry-wall-texture.jpg", scene);
-    cubeWallMaterial.bumpTexture = new BABYLON.Texture("textures/masonry-wall-bump-map.jpg", scene);
-    cubeWallMaterial.specularTexture = new BABYLON.Texture("textures/masonry-wall-normal-map.jpg", scene);
-
-    var cubeMultiMat = new BABYLON.MultiMaterial("cubeMulti", scene);
-    cubeMultiMat.subMaterials.push(cubeTopMaterial);
-    cubeMultiMat.subMaterials.push(cubeWallMaterial);
-
-    for (var row = 0; row < mCount; row++) {
-        for (var col = 0; col < mCount; col++) {
-            console.log("Maze: ", maze);
-            if (maze[row][col] == "1") {
-                var soloCube = BABYLON.Mesh.CreateBox("mainCube", BLOCK_SIZE, scene);
-                soloCube.subMeshes = [];
-                soloCube.subMeshes.push(new BABYLON.SubMesh(0, 0, 4, 0, 6, soloCube));
-                soloCube.subMeshes.push(new BABYLON.SubMesh(1, 4, 20, 6, 30, soloCube));
-                // same as soloCube.rotation.x = -Math.PI / 2; 
-                // but cannon.js needs rotation to be set via Quaternion
-                soloCube.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(0, -Math.PI / 2, 0);
-                soloCube.material = cubeMultiMat;
-                soloCube.checkCollisions = true;
-                soloCube.position = new BABYLON.Vector3(BLOCK_SIZE / 2 + (row - (mCount / 2)) * BLOCK_SIZE, BLOCK_SIZE / 2, BLOCK_SIZE / 2 + (col - (mCount / 2)) * BLOCK_SIZE);
-            }
-        }
+        engine.runRenderLoop(function() {
+            thescene.render();
+        });
     }
-
-    var x = BLOCK_SIZE / 2 + (7 - (mCount / 2)) * BLOCK_SIZE;
-    var y = BLOCK_SIZE / 2 + (1 - (mCount / 2)) * BLOCK_SIZE;
-
-    freeCamera.position = new BABYLON.Vector3(x, 5, y);
-
-    return scene;
 }
-;
 
-function createQRCodeLabyrinth(maze) {
+function createMaze(maze) {
     var mCount = maze.length;
     var scene = new BABYLON.Scene(engine);
 
@@ -149,7 +53,7 @@ function createQRCodeLabyrinth(maze) {
     groundMaterial.specularTexture.uScale = mCount;
     groundMaterial.specularTexture.vScale = mCount;
 
-    var ground = BABYLON.Mesh.CreateGround("ground", (mCount + 2) * BLOCK_SIZE, (mCount + 2) * BLOCK_SIZE, 1, scene, false);
+    var ground = BABYLON.Mesh.CreateGround("ground", mCount * BLOCK_SIZE, mCount * BLOCK_SIZE, 1, scene, false);
     ground.material = groundMaterial;
     ground.checkCollisions = true;
     ground.setPhysicsState({impostor: BABYLON.PhysicsEngine.PlaneImpostor, mass: 0, friction: 0.5, restitution: 0.7});
@@ -164,7 +68,7 @@ function createQRCodeLabyrinth(maze) {
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
 
-    //At Last, add some lights to our scene
+    //Add lights to scene
     var light0 = new BABYLON.PointLight("pointlight0", new BABYLON.Vector3(28, 78, 385), scene);
     light0.diffuse = new BABYLON.Color3(0.5137254901960784, 0.2117647058823529, 0.0941176470588235);
     light0.intensity = 0.2;
@@ -173,7 +77,6 @@ function createQRCodeLabyrinth(maze) {
     light1.diffuse = new BABYLON.Color3(1, 0.7333333333333333, 0.3568627450980392);
     light1.intensity = 0.2;
 
-    //TO DO: create the labyrinth
     var cubeTopMaterial = new BABYLON.StandardMaterial("cubeTop", scene);
     cubeTopMaterial.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.15);
 
@@ -190,8 +93,6 @@ function createQRCodeLabyrinth(maze) {
     soloCube.subMeshes = [];
     soloCube.subMeshes.push(new BABYLON.SubMesh(0, 0, 4, 0, 6, soloCube));
     soloCube.subMeshes.push(new BABYLON.SubMesh(1, 4, 20, 6, 30, soloCube));
-    // same as soloCube.rotation.x = -Math.PI / 2; 
-    // but cannon.js needs rotation to be set via Quaternion
     soloCube.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(0, -Math.PI / 2, 0);
     soloCube.material = cubeMultiMat;
     soloCube.checkCollisions = true;
@@ -264,9 +165,8 @@ function createQRCodeLabyrinth(maze) {
 
     window.addEventListener("keydown", function(event) {
         if (event.keyCode === 32) {
-            if (!QRCodeView) {
-                QRCodeView = true;
-                // Saving current position & rotation in the labyrinth
+            if (!aerialView) {
+                aerialView = true;
                 camPositionInLabyrinth = freeCamera.position;
                 camRotationInLabyrinth = freeCamera.rotation;
                 animateCameraPositionAndRotation(freeCamera, freeCamera.position,
@@ -275,11 +175,11 @@ function createQRCodeLabyrinth(maze) {
                         new BABYLON.Vector3(1.4912565104551518, -1.5709696842019767, freeCamera.rotation.z));
             }
             else {
-                QRCodeView = false;
+                aerialView = false;
                 animateCameraPositionAndRotation(freeCamera, freeCamera.position,
                         camPositionInLabyrinth, freeCamera.rotation, camRotationInLabyrinth);
             }
-            freeCamera.applyGravity = !QRCodeView;
+            freeCamera.applyGravity = !aerialView;
         }
     }, false);
 
@@ -294,30 +194,6 @@ function createQRCodeLabyrinth(maze) {
     });
 
     return scene;
-}
-;
-
-function start3dMaze(mz) {
-    canvas = document.getElementById("canvas");
-    // Check support
-    if (!BABYLON.Engine.isSupported()) {
-        window.alert('Browser not supported');
-    } else {
-        // Babylon
-        engine = new BABYLON.Engine(canvas, true);
-
-        // Resize
-        window.addEventListener("resize", function() {
-            engine.resize();
-        });
-        lovescene = createQRCodeLabyrinth(mz);
-        // Enable keyboard/mouse controls on the scene (FPS like mode)
-        lovescene.activeCamera.attachControl(canvas);
-
-        engine.runRenderLoop(function() {
-            lovescene.render();
-        });
-    }
 }
 ;
 
@@ -458,5 +334,5 @@ var animateCameraPositionAndRotation = function(freeCamera, fromPosition, toPosi
     freeCamera.animations.push(animCamPosition);
     freeCamera.animations.push(animCamRotation);
 
-    lovescene.beginAnimation(freeCamera, 0, 100, false);
+    thescene.beginAnimation(freeCamera, 0, 100, false);
 };
