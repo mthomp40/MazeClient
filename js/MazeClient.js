@@ -25,52 +25,49 @@ function Player(player) {
     this.colourname = player.colourname;
     this.colourval = player.colourval;
     this.location = player.location;
+    this.loggedin = player.loggedin;
+    this.inplay = player.inplay;
+    this.health = player.health;
 }
 
-function clearAllPlayers()
-{
+function clearAllPlayers() {
     var i;
-    console.log("clear all players");
     for (i in players) {
         players[i] = null;
     }
     players.length = 0;
 }
 
-function addPlayer(uname, heading, action, colourname, colourval, location)
-{
-    console.log("add player");
+function addPlayer(uname, heading, action, colourname, colourval, location, loggedin, inplay, health) {
     var player = new Player({
         uname: uname,
         location: location,
         heading: heading,
         action: action,
         colourname: colourname,
-        colourval: colourval
+        colourval: colourval,
+        loggedin: loggedin,
+        inplay: inplay,
+        health: health
     });
     players.push(player);
 }
 
-function doSetupSocket()
-{
-    // Get a WebSocket - browser dependent!
+function doSetupSocket() {
     socket = ("MozWebSocket" in window ? new MozWebSocket(url) : new WebSocket(url));
-    //console.log("socket created");
     socket.onclose = function(msg) {
-        alert(msg);
+        alert("Connection closed");
     };
     socket.onmessage = handleUpdate;
 }
 
 function handleUpdate(msg) {
-    //console.log("handle update");
     var info = JSON.parse(msg.data);
     var infodata = info['data'];
     if (info.action === "alreadyinuse") {
         alert("Nickname is already in use. Please try again");
         return;
     } else if (info.action === "initgame") {
-        //console.log('else if initgame data: ', infodata);
         doInitGame(infodata.maze);
         var i;
         var persons = document.getElementById('persons');
@@ -83,27 +80,21 @@ function handleUpdate(msg) {
             var colourval = colourmap[colourname];
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
+        var currenthealth = document.getElementById('currenthealth');
+        currenthealth.innerHTML = "10";
         persons.innerHTML = str;
     } else if (info.action === "die") {
-        console.log('else if die data: ', infodata);
-        alert("You died because " + infodata.uname + " hit you!");
-        var i;
-        var persons = document.getElementById('persons');
-        persons.innerHTML = "";
-        var str = "";
-        for (i in infodata) {
-            var clientdata = infodata[i];
-            var uname = clientdata['uname'];
-            var colourname = clientdata['colour'];
-            var colourval = colourmap[colourname];
-            str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
-        }
-        persons.innerHTML = str;
+        alert(infodata.message);
+        var startbutton = document.getElementById('startbutton');
+        startbutton.disabled = false;
+        var quitbutton = document.getElementById('quitbutton');
+        quitbutton.disabled = true;
     } else {
-        //console.log('else data: ', infodata);
         var i;
         var persons = document.getElementById('persons');
+        var currenthealth = document.getElementById('currenthealth');
         persons.innerHTML = "";
+        currenthealth.innerHTML = "";
         var str = "";
         clearAllPlayers();
         for (i in infodata) {
@@ -114,6 +105,9 @@ function handleUpdate(msg) {
             var location = clientdata['location'];
             var heading = clientdata['heading'];
             var action = clientdata['action'];
+            var loggedin = clientdata['loggedin'];
+            var inplay = clientdata['inplay'];
+            var health = clientdata['health'];
             if (uname === theplayer.uname) {
                 theplayer = new Player({
                     uname: uname,
@@ -121,20 +115,23 @@ function handleUpdate(msg) {
                     heading: heading,
                     action: action,
                     colourname: colourname,
-                    colourval: colourval
+                    colourval: colourval,
+                    loggedin: loggedin,
+                    inplay: inplay,
+                    health: health
                 });
             }
-            addPlayer(uname, heading, action, colourname, colourval, location);
+            addPlayer(uname, heading, action, colourname, colourval, location, loggedin, inplay, health);
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
         drawMaze();
         drawPlayers(players);
         persons.innerHTML = str;
+        currenthealth.innerHTML = "" + theplayer.health;
     }
 }
 
 function doLogin() {
-    console.log("login");
     var uname = document.getElementById('uname').value;
     if (uname === "") {
         alert("You must supply a nickname");
@@ -150,7 +147,6 @@ function doLogin() {
 }
 
 function doLogout() {
-    console.log("logout");
     var uname = document.getElementById('uname');
     uname.value = "";
     var loginbutton = document.getElementById('loginbutton');
@@ -169,7 +165,6 @@ function doLogout() {
 }
 
 function doInitGame(data) {
-    //console.log("init game");
     var uname = document.getElementById('uname');
     theplayer = new Player({
         uname: uname.value,
@@ -178,7 +173,8 @@ function doInitGame(data) {
         action: null,
         colour: null,
         loggedin: true,
-        inplay: null
+        inplay: false,
+        health: 10
     });
     var login = document.getElementById('login');
     login.style.display = "none";
@@ -190,12 +186,15 @@ function doInitGame(data) {
     people.style.visibility = "visible";
     var maze = document.getElementById('myCanvas');
     maze.style.visibility = "visible";
+    var health = document.getElementById('health');
+    health.style.visibility = "visible";
+    var currenthealth = document.getElementById('currenthealth');
+    currenthealth.innerHTML = "10";
 
     initMaze(data);
 }
 
 function doStart() {
-    //console.log("doStart");
     var startbutton = document.getElementById('startbutton');
     startbutton.disabled = true;
     var quitbutton = document.getElementById('quitbutton');
@@ -209,33 +208,48 @@ function doStart() {
     socket.send(stringversion);
 }
 
+function doQuit() {
+    var startbutton = document.getElementById('startbutton');
+    startbutton.disabled = false;
+    var quitbutton = document.getElementById('quitbutton');
+    quitbutton.disabled = true;
+    var data = new Object();
+    data.uname = document.getElementById('uname').value;
+    var command = new Object();
+    command.action = "quit";
+    command.data = data;
+    var stringversion = JSON.stringify(command);
+    socket.send(stringversion);
+}
+
 function doMoveCommand(button) {
-    //console.log("move command");
-    if (theplayer.heading === button) {
-        if (isValidMove(theplayer.location, button)) {
+    if (theplayer.inplay == true) {
+        if (theplayer.heading === button) {
+            if (isValidMove(theplayer.location, button)) {
+                var data = new Object();
+                data.heading = button;
+                var command = new Object();
+                command.action = "move";
+                command.data = data;
+                var stringversion = JSON.stringify(command);
+                socket.send(stringversion);
+            }
+        } else if (button === 'fire') {
+            var data = new Object();
+            data.heading = theplayer.heading;
+            var command = new Object();
+            command.action = "fire";
+            command.data = data;
+            var stringversion = JSON.stringify(command);
+            socket.send(stringversion);
+        } else {
             var data = new Object();
             data.heading = button;
             var command = new Object();
-            command.action = "move";
+            command.action = "direction";
             command.data = data;
             var stringversion = JSON.stringify(command);
             socket.send(stringversion);
         }
-    } else if (button === 'fire') {
-        var data = new Object();
-        data.heading = theplayer.heading;
-        var command = new Object();
-        command.action = "fire";
-        command.data = data;
-        var stringversion = JSON.stringify(command);
-        socket.send(stringversion);
-    } else {
-        var data = new Object();
-        data.heading = button;
-        var command = new Object();
-        command.action = "direction";
-        command.data = data;
-        var stringversion = JSON.stringify(command);
-        socket.send(stringversion);
     }
 }
