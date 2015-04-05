@@ -19,11 +19,9 @@ function initMaze(gr) {
     grid = gr;
     rows = grid.length;
     columns = grid[0].length;
-    tileSize = 10;
+    wrapper = document.getElementById('controlswrapper');
     canvas = document.getElementById('myCanvas');
     context = canvas.getContext('2d');
-    context.canvas.width = 800;
-    context.canvas.height = 800;
     tileSize = context.canvas.width / grid[0].length;
     // draw it
     drawMaze();

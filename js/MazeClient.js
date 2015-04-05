@@ -178,19 +178,11 @@ function doInitGame(data) {
     });
     var login = document.getElementById('login');
     login.style.display = "none";
-    var movement = document.getElementById('movement');
-    movement.style.visibility = "visible";
-    var actions = document.getElementById('actions');
-    actions.style.visibility = "visible";
-    var people = document.getElementById('people');
-    people.style.visibility = "visible";
-    var maze = document.getElementById('myCanvas');
-    maze.style.visibility = "visible";
-    var health = document.getElementById('health');
-    health.style.visibility = "visible";
-    var currenthealth = document.getElementById('currenthealth');
-    currenthealth.innerHTML = "10";
-
+    var controls = document.getElementById('controlswrapper');
+    controls.style.visibility = "visible";
+    var canvas = document.getElementById('canvaswrapper');
+    canvas.style.visibility = "visible";
+    
     initMaze(data);
 }
 

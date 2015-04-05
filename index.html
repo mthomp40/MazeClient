@@ -23,11 +23,16 @@ and open the template in the editor.
                     <input type="button" class="button grey" value="Logout" onclick="doLogout()" disabled id="logoutbutton"/>
                 </fieldset>
             </div>
-            <canvas id="myCanvas" style="visibility: hidden;" width="600" height="600" >
-                Sorry! You need a modern browser to be able to view this.
-            </canvas>
-            <div id="controlswrapper" style="float:right">
-                <div id="movement" style="visibility: hidden;">
+            <div id="canvaswrapper" style="visibility: hidden">
+                <fieldset>
+                    <legend>Maze</legend>
+                    <canvas id="myCanvas" width="700" height="700">
+                        Sorry! You need a modern browser to be able to view this.
+                    </canvas>
+                </fieldset>
+            </div>
+            <div id="controlswrapper" style="visibility: hidden">
+                <div id="movement">
                     <fieldset>
                         <legend>Movement</legend>
                         <table>
@@ -45,20 +50,20 @@ and open the template in the editor.
                         </table>
                     </fieldset>
                 </div>
-                <div id="actions" style="visibility: hidden;">
+                <div id="actions">
                     <fieldset>
                         <legend>Actions</legend>
                         <input type="button" class="button grey" value="Start" onclick="doStart()" id="startbutton"/>
                         <input type="button" class="button grey" value="Quit" onclick="doQuit()" id="quitbutton"/>
                     </fieldset>
                 </div>
-                <div id="people" style="visibility: hidden;">
+                <div id="people">
                     <fieldset>
                         <legend>People</legend>
                         <p><span id="persons"></span></p>
                     </fieldset>
                 </div>
-                <div id="health" style="visibility: hidden;">
+                <div id="health">
                     <fieldset>
                         <legend>Health</legend>
                         <h2 id="currenthealth"></h2>
@@ -84,7 +89,7 @@ and open the template in the editor.
             }
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script>
+        <script type="text/javascript">
             $(document).ready(function() {
             $(document).keydown(function(event){
             if (event.which == 37) {
