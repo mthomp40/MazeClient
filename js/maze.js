@@ -23,21 +23,23 @@ function initMaze(gr) {
     canvas = document.getElementById('myCanvas');
     context = canvas.getContext('2d');
     tileSize = context.canvas.width / grid[0].length;
-    // draw it
     drawMaze();
 }
 
 function drawMaze() {
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "#FFFFFF";
+    context.fillStyle = "#dddddd";
     context.fillRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "#000000";
 
-    for (var y = 0; y < grid.length; y++) {
-        for (var x = 0; x < grid[y].length; x++) {
-            var cell = grid[y][x];
-            if (cell != 0) {
-                context.fillRect(tileSize * x, tileSize * y, tileSize, tileSize);
+    var img = new Image();
+    img.src = "images/brick.jpg";
+    img.onload = function() {
+        for (var y = 0; y < grid.length; y++) {
+            for (var x = 0; x < grid[y].length; x++) {
+                var cell = grid[y][x];
+                if (cell != 0) {
+                    context.drawImage(img, tileSize * x, tileSize * y, tileSize, tileSize);
+                }
             }
         }
     }

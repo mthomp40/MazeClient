@@ -24,12 +24,9 @@ and open the template in the editor.
                 </fieldset>
             </div>
             <div id="canvaswrapper" style="visibility: hidden">
-                <fieldset>
-                    <legend>Maze</legend>
-                    <canvas id="myCanvas" width="700" height="700">
-                        Sorry! You need a modern browser to be able to view this.
-                    </canvas>
-                </fieldset>
+                <canvas id="myCanvas" width="700" height="700">
+                    Sorry! You need a modern browser to be able to view this.
+                </canvas>
             </div>
             <div id="controlswrapper" style="visibility: hidden">
                 <div id="movement">
@@ -109,6 +106,22 @@ and open the template in the editor.
             event.preventDefault();
             }
             });
+            var c = $('#myCanvas');
+            var ct = c.get(0).getContext('2d');
+            var container = $(c).parent();
+
+            //Run function when browser resizes
+            $(window).resize(respondCanvas);
+
+            function respondCanvas(){ 
+            c.attr('width', $(container).width() ); //max width
+            c.attr('height', $(container).height() ); //max height
+            drawMaze();
+            drawPlayers;
+            }
+
+            //Initial call 
+            respondCanvas();
             });
         </script>
     </body>

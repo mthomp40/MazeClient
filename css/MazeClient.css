@@ -45,7 +45,7 @@ body {
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 20px;
+    padding: 0 40px;
 }
 
 #controlswrapper {
@@ -58,9 +58,8 @@ body {
 #canvaswrapper {
     display: inline-block;
     float: left;
-    height: 700px;    
-    width: 700px;
     background-color: black;
+    border: yellow outset thick;
 }
 
 #pageheader {
@@ -94,6 +93,8 @@ fieldset input {
 }
 
 #myCanvas {
+    height: 750px;    
+    width: 750px;
 }
 
 .button::before {
