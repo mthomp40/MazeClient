@@ -23,24 +23,33 @@ function initMaze(gr) {
     canvas = document.getElementById('myCanvas');
     context = canvas.getContext('2d');
     tileSize = context.canvas.width / grid[0].length;
-    drawMaze();
+    var players = [];
+    drawMaze(players);
 }
 
-function drawMaze() {
+function drawMaze(players) {
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "#dddddd";
-    context.fillRect(0, 0, canvas.width, canvas.height);
 
-    var img = new Image();
-    img.src = "images/brick.jpg";
-    img.onload = function() {
+    var floorimg = new Image();
+    floorimg.src = "images/floor.jpg";
+    var brickimg = new Image();
+    brickimg.src = "images/brick.jpg";
+    floorimg.onload = function() {
         for (var y = 0; y < grid.length; y++) {
             for (var x = 0; x < grid[y].length; x++) {
-                var cell = grid[y][x];
-                if (cell != 0) {
-                    context.drawImage(img, tileSize * x, tileSize * y, tileSize, tileSize);
+                context.drawImage(floorimg, tileSize * x, tileSize * y, tileSize, tileSize);
+            }
+        }
+        brickimg.onload = function() {
+            for (var y = 0; y < grid.length; y++) {
+                for (var x = 0; x < grid[y].length; x++) {
+                    var cell = grid[y][x];
+                    if (cell != 0) {
+                        context.drawImage(brickimg, tileSize * x, tileSize * y, tileSize, tileSize);
+                    }
                 }
             }
+            drawPlayers(players);
         }
     }
 }

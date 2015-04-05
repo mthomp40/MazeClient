@@ -124,8 +124,7 @@ function handleUpdate(msg) {
             addPlayer(uname, heading, action, colourname, colourval, location, loggedin, inplay, health);
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
-        drawMaze();
-        drawPlayers(players);
+        drawMaze(players);
         persons.innerHTML = str;
         currenthealth.innerHTML = "" + theplayer.health;
     }
