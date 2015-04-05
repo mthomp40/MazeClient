@@ -6,7 +6,7 @@
         <link rel='stylesheet' type="text/css" href="./css/MazeClient.css">
         <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin">
     </head>
-    <body onload="doSetupSocket()">
+    <body>
         <div id="wrapper" class="glow">
             <div id="pageheader">
                 <img src="images/logo.png">
@@ -15,12 +15,17 @@
                 <fieldset>
                     <legend>Login</legend>
                     <p>Nickname: <input type="text" id="uname" size="20" /></p>
+                    <form action="">
+                        <input type="radio" id="2d" name="mazetype" checked value="2D">2D<br>
+                        <input type="radio" name="mazetype" value="3D">3D
+                    </form>
                     <input type="button" class="button grey" value="Login" onclick="doLogin()" id="loginbutton"/>
                     <input type="button" class="button grey" value="Logout" onclick="doLogout()" disabled id="logoutbutton"/>
                 </fieldset>
             </div>
             <div id="canvaswrapper" style="visibility: hidden">
-                <canvas id="myCanvas" width="700" height="700">
+                <canvas id="canvas" class="offscreen" style="display: none"></canvas>
+                <canvas id="myCanvas" width="700" height="700" style="display: none">
                     Sorry! You need a modern browser to be able to view this.
                 </canvas>
             </div>
@@ -66,6 +71,10 @@
         </div>
         <script type="text/javascript" src="./js/MazeClient.js"></script>
         <script type="text/javascript" src="./js/maze.js"></script>
+        <script type="text/javascript" src="./js/babylon.js"></script>
+        <script type="text/javascript" src="./js/cannon.js"></script>
+        <script type="text/javascript" src="./js/qrcode.js"></script>
+        <script type="text/javascript" src="./js/fpsmaze.js"></script>
         <script id="shader-fs" type="x-shader/x-fragment">
             void main(void) {
             gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
@@ -84,25 +93,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-            $(document).keydown(function(event){
-            if (event.which == 37) {
-            doMoveCommand('left');
-            event.preventDefault();
-            } else if (event.which == 39) {
-            doMoveCommand('right');
-            event.preventDefault();
-            } else if (event.which == 38) {
-            doMoveCommand('up');
-            event.preventDefault();
-            } else if (event.which == 40) {
-            doMoveCommand('down');
-            event.preventDefault();
-            } else if (event.which == 32) {
-            doMoveCommand('fire');
-            event.preventDefault();
-            }
-            });
-            $(window).resize(redrawMaze());
+            doSetupSocket();
             });
         </script>
     </body>

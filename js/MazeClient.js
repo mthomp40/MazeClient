@@ -17,10 +17,7 @@ var theplayer = null;
 var players = new Array();
 var heading;
 var blocksize = 15;
-
-function redrawMaze() {
-    drawMaze(players);
-}
+var mazetype = null;
 
 function Player(player) {
     this.uname = player.uname;
@@ -72,7 +69,14 @@ function handleUpdate(msg) {
         alert("Nickname is already in use. Please try again");
         return;
     } else if (info.action === "initgame") {
-        doInitGame(infodata.maze);
+        var maze2dradio = document.getElementById('2d');
+        if (maze2dradio.checked == true) {
+            mazetype = 2;
+            doInitGame(infodata.maze);
+        } else {
+            mazetype = 3;
+            do3dInitGame(infodata.maze);
+        }
         var i;
         var persons = document.getElementById('persons');
         persons.innerHTML = "";
@@ -128,7 +132,12 @@ function handleUpdate(msg) {
             addPlayer(uname, heading, action, colourname, colourval, location, loggedin, inplay, health);
             str = str + "<font style='color:" + colourval + "'>" + uname + "</font>, ";
         }
-        drawMaze(players);
+        if (mazetype == 2) {
+            drawMaze(players);
+        } else {
+            //draw3dMaze(players);
+        }
+
         persons.innerHTML = str;
         currenthealth.innerHTML = "" + theplayer.health;
     }
@@ -185,8 +194,56 @@ function doInitGame(data) {
     controls.style.visibility = "visible";
     var canvas = document.getElementById('canvaswrapper');
     canvas.style.visibility = "visible";
+    var c = document.getElementById('myCanvas');
+    c.style.display = "inline-block";
+    $(document).keydown(function(event) {
+        if (event.which == 37) {
+            doMoveCommand('left');
+            event.preventDefault();
+        } else if (event.which == 39) {
+            doMoveCommand('right');
+            event.preventDefault();
+        } else if (event.which == 38) {
+            doMoveCommand('up');
+            event.preventDefault();
+        } else if (event.which == 40) {
+            doMoveCommand('down');
+            event.preventDefault();
+        } else if (event.which == 32) {
+            doMoveCommand('fire');
+            event.preventDefault();
+        }
+    });
 
     initMaze(data);
+}
+
+function do3dInitGame(data) {
+    var uname = document.getElementById('uname');
+    theplayer = new Player({
+        uname: uname.value,
+        location: null,
+        heading: null,
+        action: null,
+        colour: null,
+        loggedin: true,
+        inplay: false,
+        health: 10
+    });
+    var login = document.getElementById('login');
+    login.style.display = "none";
+    var controls = document.getElementById('controlswrapper');
+    //controls.style.visibility = "visible";
+    //controls.style.width = "100%";
+    //controls.style.float = "left";
+    var canvas = document.getElementById('canvaswrapper');
+    canvas.style.visibility = "visible";
+    canvas.style.width = "100%";
+    canvas.style.height = "730px";
+    var c = document.getElementById('canvas');
+    c.style.display = "inline-block";
+
+    start3dMaze(data);
 }
 
 function doStart() {
