@@ -233,16 +233,15 @@ function do3dInitGame(data) {
     var login = document.getElementById('login');
     login.style.display = "none";
     var controls = document.getElementById('controlswrapper');
-    //controls.style.visibility = "visible";
-    //controls.style.width = "100%";
-    //controls.style.float = "left";
     var canvas = document.getElementById('canvaswrapper');
     canvas.style.visibility = "visible";
     canvas.style.width = "100%";
     canvas.style.height = "730px";
     var c = document.getElementById('canvas');
     c.style.display = "inline-block";
-
+    var v = document.getElementById('viseur');
+    v.style.display = "inline-block";
+    
     start3dMaze(data);
 }
 

@@ -70,6 +70,21 @@ body {
     touch-action: none;
 }
 
+#threedwrapper {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+#viseur {
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-top:57px;
+    margin-left:-37px;
+}
+
 #pageheader {
     color: red;
     text-align: center;
@@ -167,6 +182,141 @@ fieldset input {
         height: auto;
     }
 
+    #actions {
+        width: auto;
+    }
+}
+
+/* ----------- iPhone 5 and 5S ----------- */
+
+/* Portrait and Landscape */
+@media only screen 
+and (min-device-width: 320px) 
+and (max-device-width: 568px)
+and (-webkit-min-device-pixel-ratio: 2) {
+
+}
+
+/* Portrait */
+@media only screen 
+and (min-device-width: 320px) 
+and (max-device-width: 568px)
+and (-webkit-min-device-pixel-ratio: 2)
+and (orientation: portrait) {
+    #wrapper {
+        margin-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 10px;
+    }
+
+    #canvaswrapper {
+        width: 73%;
+        margin: 10px 0 5px;
+    }
+
+    #myCanvas {
+        width: 100%;
+        height: auto;
+    }
+
+    #controlswrapper {
+        width: 23%;
+        margin: 0 5px;
+    }
+
+    #movement input {
+        width: 100%;
+        height: auto;
+    }
+    #actions {
+        width: auto;
+    }
+}
+
+/* Landscape */
+@media only screen 
+and (min-device-width: 320px) 
+and (max-device-width: 568px)
+and (-webkit-min-device-pixel-ratio: 2)
+and (orientation: landscape) {
+    #wrapper {
+        margin-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 10px;
+    }
+
+    #canvaswrapper {
+        width: 73%;
+        margin: 10px 0 5px;
+    }
+
+    #myCanvas {
+        width: 100%;
+        height: auto;
+    }
+
+    #controlswrapper {
+        width: 23%;
+        margin: 0 5px;
+    }
+
+    #movement input {
+        width: 100%;
+        height: auto;
+    }
+    #actions {
+        width: auto;
+    }
+}
+
+/* ----------- Galaxy Tab 10.1 ----------- */
+
+/* Portrait and Landscape */
+@media 
+(min-device-width: 800px) 
+and (max-device-width: 1280px) {
+
+}
+
+/* Portrait */
+@media 
+(max-device-width: 800px) 
+and (orientation: portrait) { 
+
+}
+
+/* Landscape */
+@media 
+(max-device-width: 1280px) 
+and (orientation: landscape) { 
+    #wrapper {
+        margin-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 10px;
+    }
+
+    #canvaswrapper {
+        width: 73%;
+        margin: 10px 0 5px;
+    }
+
+    #myCanvas {
+        width: 100%;
+        height: auto;
+    }
+
+    #controlswrapper {
+        width: 23%;
+        margin: 0 5px;
+    }
+
+    #movement input {
+        width: 100%;
+        height: auto;
+    }
     #actions {
         width: auto;
     }
